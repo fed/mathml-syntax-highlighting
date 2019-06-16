@@ -8,9 +8,12 @@ import CodeMirror from 'codemirror/lib/codemirror.js';
 import 'codemirror/mode/xml/xml.js';
 import 'codemirror/lib/codemirror.css';
 
-// ##############################################
+// MathML examples
+import { multiLineIndented, multiLineNotIndented, singleLine } from './mathml';
+
+// ################################################
 // Highlight.js for static content
-// ##############################################
+// ################################################
 hljs.registerLanguage('xml', xml);
 
 // htmlentities() is a PHP function which converts special characters (like <)
@@ -26,51 +29,47 @@ function htmlEntities(str) {
         .replace(/"/g, '&quot;');
 }
 
-const staticMathMLContainer = document.getElementById('static');
-const sampleMathMLContent = `
-    <math xmlns="http://www.w3.org/1998/Math/MathML">
-        <mrow>
-            <munderover>
-                <mo>&#8721;</mo>
-                <mrow>
-                    <mi>k</mi>
-                    <mo>=</mo>
-                    <mn>1</mn>
-                </mrow>
-                <mn>7</mn>
-            </munderover>
-            <mfrac>
-                <msup>
-                    <mi>x</mi>
-                    <mi>k</mi>
-                </msup>
-                <mrow>
-                    <mi>k</mi>
-                    <mo>!</mo>
-                </mrow>
-            </mfrac>
-        </mrow>
-    </math>`;
-
-const encodedContent = htmlEntities(sampleMathMLContent);
+const staticContainer = document.getElementById('static');
+const encodedContent = htmlEntities(multiLineIndented);
 
 // Inject MathML into the DOM.
-staticMathMLContainer.innerHTML = encodedContent;
+staticContainer.innerHTML = encodedContent;
 
 // Applies highlighting to all <pre><code>..</code></pre> blocks on a page.
 // hljs.initHighlighting();
 
 // Alternatively we can target exactly the code block we want.
-hljs.highlightBlock(staticMathMLContainer);
+hljs.highlightBlock(staticContainer);
 
-// ##############################################
+// ################################################
 // CodeMirror for dynamic content
-// ##############################################
-const dynamicMathMLTextarea = document.getElementById('dynamic');
+// ################################################
+const dynamicTextarea = document.getElementById('dynamic');
 const codeMirrorInstance = CodeMirror(
-    el => dynamicMathMLTextarea.parentNode.replaceChild(el, dynamicMathMLTextarea),
+    el => dynamicTextarea.parentNode.replaceChild(el, dynamicTextarea),
     {
-        value: sampleMathMLContent,
-        mode: 'xml'
+        value: singleLine,
+        mode: 'xml',
+        lineWrapping: true
     }
 );
+
+codeMirrorInstance.setSize(null, 100);
+
+// ################################################
+// CodeMirror for dynamic content with auto indent
+// ################################################
+const dynamicTextareaAutoIndent = document.getElementById('dynamic-autoindent');
+const codeMirrorAutoIndentInstance = CodeMirror(
+    el => dynamicTextareaAutoIndent.parentNode.replaceChild(el, dynamicTextareaAutoIndent),
+    {
+        value: multiLineNotIndented,
+        mode: 'xml',
+        lineNumbers: true,
+        lineWrapping: true
+    }
+);
+
+codeMirrorAutoIndentInstance.execCommand('selectAll');
+codeMirrorAutoIndentInstance.execCommand('indentAuto');
+codeMirrorAutoIndentInstance.setCursor({ line: 1, ch: 1 });
