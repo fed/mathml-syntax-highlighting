@@ -11,8 +11,8 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "codemirror": "^5.47.0",
-    "highlight.js": "^9.15.8"
+    "codemirror": "^5.49.0",
+    "highlight.js": "^9.15.10"
   },
   "devDependencies": {
     "parcel-bundler": "^1.12.3"
